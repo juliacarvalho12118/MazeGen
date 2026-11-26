@@ -1,85 +1,346 @@
-// This file is part of www.nand2tetris.org
-// and the book "The Elements of Computing Systems"
-// by Nisan and Schocken, MIT Press.
-// File name: projects/09/Square/SquareGame.jack
+// Parte do projeto Ghost Multiplayer (Projeto 6).
+// Adaptado de SquareGame.jack (nand2tetris, projects/09) e do GhostGame original.
 
 /**
- * Implements the Square Dance game.
- * This simple game allows the user to move a black square around
- * the screen, and change the square's size during the movement.
- * When the game starts, a square of 30 by 30 pixels is shown at the
- * top-left corner of the screen. The user controls the square as follows.
- * The 4 arrow keys are used to move the square up, down, left, and right.
- * The 'z' and 'x' keys are used, respectively, to decrement and increment
- * the square's size. The 'q' key is used to quit the game.
+ * Controla o jogo Ghost Multiplayer.
+ *
+ * Jogador 1 (Fantasma): setas mudam a direcao, '.' para.
+ * Jogador 2 (Pessoa)  : W A S D mudam a direcao, 'E' para.
+ * ESC encerra o jogo a qualquer momento.
+ *
+ * Estrategias:
+ *  - Movimento: o jogador so informa a DIRECAO; a cada "tick" (100 ms) cada
+ *    sprite anda 1 celula sozinho ate bater em obstaculo ou receber "parar".
+ *  - Teclado: dentro de cada tick o teclado e lido 10 vezes (a cada 10 ms),
+ *    para nao perder toques rapidos nas teclas.
+ *  - Tempo: contado em ticks (10 ticks = 1 segundo). Fase 1: 3 s com o fantasma
+ *    parado. Fase 2: 7 s com os dois se movendo.
+ *  - Colisao com parede: antes de mover, pergunta ao Maze (isWall) e aos
+ *    limites da tela se a proxima celula e livre.
+ *  - Colisao fantasma x pessoa: mesma celula (checada apos cada movimento).
+ *
+ * Dependencia (classe Maze, feita por outra pessoa):
+ *    constructor Maze new()
+ *    method void draw()                      desenha o mapa (usar linhas 1..15)
+ *    method boolean isWall(int col, int row) true se a celula e parede
+ *    method void dispose()
  */
-
 class GhostGame {
-   field int direction; // the square's current direction: 
-                        // 0=none, 1=up, 2=down, 3=left, 4=right
-   field Random random;
-   field Ghost ghost;
 
-   /** Constructs a new Square Game. */
+   field Maze maze;
+   field Ghost ghost;       // Jogador 1
+   field Person person;     // Jogador 2
+   field Random random;
+
+   field boolean quit;          // true quando ESC foi pressionado
+   field boolean ghostCanMove;  // false durante a contagem inicial
+   field int prepTicks;         // duracao da fase 1 em ticks (10 ticks = 1 s)
+   field int gameTicks;         // duracao da fase 2 em ticks
+
+   /** Cria o jogo. Os tempos podem ser ajustados aqui. */
    constructor GhostGame new() {
-      // Creates a 30 by 30 pixels square and positions it at the top-left
-      // of the screen.
-      let ghost = Ghost.new(0, 0);
+      let maze = Maze.new();
+      let ghost = Ghost.new(0, 1);
+      let person = Person.new(0, 1);
       let random = Random.new(19);
-      let direction = 0;  // initial state is no movement
+      let quit = false;
+      let ghostCanMove = false;
+      let prepTicks = 30;    // 3 segundos para a pessoa fugir
+      let gameTicks = 70;    // 7 segundos de perseguicao
       return this;
    }
 
-   /** Disposes this game. */
+   /** Libera a memoria do jogo. */
    method void dispose() {
       do ghost.dispose();
+      do person.dispose();
+      do random.dispose();
+      do maze.dispose();
       do Memory.deAlloc(this);
       return;
    }
 
-   /** Moves the square in the current direction. */
-   method void moveGhost() {
-      if (direction = 1) { do ghost.moveUp(); }
-      if (direction = 2) { do ghost.moveDown(); }
-      if (direction = 3) { do ghost.moveLeft(); }
-      if (direction = 4) { do ghost.moveRight(); }
-      do Sys.wait(5);  // delays the next movement
+   // =====================================================================
+   //  Fluxo principal
+   // =====================================================================
+
+   /** Executa o jogo: tela inicial e depois rodadas, reiniciando sozinho. */
+   method void run() {
+      var int seed;
+      var boolean caught;
+
+      let seed = showStartScreen();
+      if (~quit) {
+         // semente aleatoria = tempo que o usuario demorou para apertar uma tecla
+         do random.dispose();
+         let random = Random.new(seed);
+      }
+
+      while (~quit) {
+         do newRound();
+         // Fase 1: fantasma parado, pessoa se afasta
+         let caught = runPhase(prepTicks, false, 1);
+         // Fase 2: perseguicao
+         if ((~caught) & (~quit)) {
+            let caught = runPhase(gameTicks, true, 2);
+         }
+         if (~quit) {
+            do showGameOver(caught);
+            do waitRestart();      // reinicio automatico
+         }
+      }
+
+      do Screen.clearScreen();
       return;
    }
 
-   /** Runs the game: handles the user's inputs and moves the square accordingly */
-   method void run() {
-      var char key;  // the key currently pressed by the user
-      var boolean exit;
-      let exit = false;
-      
-      while (~exit) {
-         // waits for a key to be pressed
-         while (key = 0) {
-            let key = Keyboard.keyPressed();
-            do moveGhost();
-            do Sys.wait(50);
-            // let direction = random.randRange(4);
-         }
-         if (key = 81)  { let exit = true; }     // q key
-         // if (key = 90)  { do ghost.decSize(); } // z key
-         // if (key = 88)  { do ghost.incSize(); } // x key
-         if (key = 131) { let direction = 1; }   // up arrow
-         if (key = 133) { let direction = 2; }   // down arrow
-         if (key = 130) { let direction = 3; }   // left arrow
-         if (key = 132) { let direction = 4; }   // right arrow
+   /** Prepara uma rodada: mapa, posicoes aleatorias e sprites. */
+   method void newRound() {
+      var int ghostCell, personCell;
 
-         // waits for the key to be released
-         while (~(key = 0)) {
-            let key = Keyboard.keyPressed();
-            do moveGhost();
-            do Sys.wait(50);
+      do Screen.clearScreen();
+      do maze.draw();
+
+      let ghostCell = randomFreeCell(-1);
+      let personCell = randomFreeCell(ghostCell);   // nunca na mesma celula
+
+      do ghost.reset(ghostCell & 31, ghostCell / 32);
+      do person.reset(personCell & 31, personCell / 32);
+      return;
+   }
+
+   /**
+    * Sorteia uma celula livre (indice = row*32 + col). Ignora a linha 0 (relogio),
+    * paredes e a celula "avoid". Uma unica chamada ao Random cobre as 512 celulas.
+    */
+   method int randomFreeCell(int avoid) {
+      var int cell, c, r;
+      var boolean ok;
+      let ok = false;
+      while (~ok) {
+         let cell = random.randRange(511);
+         let c = cell & 31;
+         let r = cell / 32;
+         if (r > 0) {
+            if (~(maze.isWall(c, r))) {
+               if (~(cell = avoid)) {
+                  let ok = true;
+               }
+            }
          }
-         let direction = 0; 
-     } // while
-     return;
+      }
+      return cell;
+   }
+
+   /**
+    * Executa uma fase de contagem regressiva.
+    * ticks: duracao; ghostMoves: se o fantasma pode andar; phase: 1 ou 2 (texto do relogio).
+    * Retorna true se o fantasma pegou a pessoa.
+    */
+   method boolean runPhase(int ticks, boolean ghostMoves, int phase) {
+      var int ticksLeft, secs, shown;
+      var boolean caught;
+
+      let caught = false;
+      let ticksLeft = ticks;
+      let shown = -1;
+      let ghostCanMove = ghostMoves;
+
+      while ((ticksLeft > 0) & (~caught) & (~quit)) {
+         // relogio: so redesenha quando o segundo muda (arredonda para cima)
+         let secs = (ticksLeft + 9) / 10;
+         if (~(secs = shown)) {
+            let shown = secs;
+            do showHud(phase, secs);
+         }
+         do readInput();                 // ~100 ms, le teclado varias vezes
+         let caught = stepPlayers();     // move os dois e verifica colisao
+         let ticksLeft = ticksLeft - 1;
+      }
+      return caught;
+   }
+
+   // =====================================================================
+   //  Entrada (teclado)
+   // =====================================================================
+
+   /** Passa ~100 ms lendo o teclado a cada 10 ms. */
+   method void readInput() {
+      var int i;
+      var char key;
+      let i = 0;
+      while (i < 10) {
+         let key = Keyboard.keyPressed();
+         do handleKey(key);
+         do Sys.wait(10);
+         let i = i + 1;
+      }
+      return;
+   }
+
+   /** Traduz uma tecla em mudanca de direcao / parada / saida. */
+   method void handleKey(char key) {
+      if (key = 140) { let quit = true; }                       // ESC
+
+      // Jogador 1 - Fantasma (ignorado enquanto o fantasma esta preso)
+      if (ghostCanMove) {
+         if (key = 131) { do ghost.setDirection(1); }           // seta cima
+         if (key = 133) { do ghost.setDirection(2); }           // seta baixo
+         if (key = 130) { do ghost.setDirection(3); }           // seta esquerda
+         if (key = 132) { do ghost.setDirection(4); }           // seta direita
+         if (key = 46)  { do ghost.stop(); }                    // '.'
+      }
+
+      // Jogador 2 - Pessoa (maiuscula ou minuscula)
+      if ((key = 119) | (key = 87)) { do person.setDirection(1); }   // w
+      if ((key = 115) | (key = 83)) { do person.setDirection(2); }   // s
+      if ((key = 97)  | (key = 65)) { do person.setDirection(3); }   // a
+      if ((key = 100) | (key = 68)) { do person.setDirection(4); }   // d
+      if ((key = 101) | (key = 69)) { do person.stop(); }            // e
+      return;
+   }
+
+   // =====================================================================
+   //  Movimento e colisao
+   // =====================================================================
+
+   /** Move a pessoa e depois o fantasma. Retorna true se se encontraram. */
+   method boolean stepPlayers() {
+      var boolean caught;
+      do movePerson();
+      let caught = sameCell();
+      if ((~caught) & ghostCanMove) {
+         do moveGhost();
+         let caught = sameCell();
+      }
+      return caught;
+   }
+
+   /** Anda 1 celula na direcao atual; se bater em obstaculo, para. */
+   method void movePerson() {
+      var int c, r;
+      if (~(person.getDirection() = 0)) {
+         let c = person.nextCol();
+         let r = person.nextRow();
+         if (isFree(c, r)) {
+            do person.moveTo(c, r);
+         }
+         else {
+            do person.stop();
+         }
+      }
+      return;
+   }
+
+   /** Anda 1 celula na direcao atual; se bater em obstaculo, para. */
+   method void moveGhost() {
+      var int c, r;
+      if (~(ghost.getDirection() = 0)) {
+         let c = ghost.nextCol();
+         let r = ghost.nextRow();
+         if (isFree(c, r)) {
+            do ghost.moveTo(c, r);
+         }
+         else {
+            do ghost.stop();
+         }
+      }
+      return;
+   }
+
+   /** true se (c, r) esta dentro da area de jogo e nao e parede. */
+   method boolean isFree(int c, int r) {
+      if (c < 0)  { return false; }
+      if (c > 31) { return false; }
+      if (r < 1)  { return false; }    // linha 0 = relogio
+      if (r > 15) { return false; }
+      return ~(maze.isWall(c, r));
+   }
+
+   /** true se fantasma e pessoa estao na mesma celula. */
+   method boolean sameCell() {
+      return (ghost.getCol() = person.getCol()) & (ghost.getRow() = person.getRow());
+   }
+
+   // =====================================================================
+   //  Telas e textos
+   // =====================================================================
+
+   /** Imprime e libera a string (evita vazamento de memoria no heap). */
+   method void printText(String s) {
+      do Output.printString(s);
+      do s.dispose();
+      return;
+   }
+
+   /** Relogio regressivo na linha 0 da tela. */
+   method void showHud(int phase, int secs) {
+      do Screen.setColor(false);
+      do Screen.drawRectangle(0, 0, 511, 13);
+      do Output.moveCursor(0, 1);
+      if (phase = 1) { do printText("Fantasma preso: "); }
+      else           { do printText("Tempo restante: "); }
+      do Output.printInt(secs);
+      return;
+   }
+
+   /** Tela inicial. Retorna um numero (tempo ate apertar uma tecla) usado como semente. */
+   method int showStartScreen() {
+      var int seed;
+      var char key;
+
+      do Screen.clearScreen();
+      do Output.moveCursor(6, 23);
+      do printText("GHOST MULTIPLAYER");
+      do Output.moveCursor(9, 13);
+      do printText("Jogador 1 (Fantasma): setas | parar: .");
+      do Output.moveCursor(10, 13);
+      do printText("Jogador 2 (Pessoa): W A S D | parar: E");
+      do Output.moveCursor(12, 13);
+      do printText("Jogador 2 vence se fugir ate o tempo acabar");
+      do Output.moveCursor(14, 23);
+      do printText("ESC encerra o jogo");
+      do Output.moveCursor(17, 13);
+      do printText("Pressione qualquer tecla para iniciar");
+
+      let seed = 0;
+      let key = Keyboard.keyPressed();
+      while (key = 0) {
+         let seed = seed + 1;
+         if (seed > 30000) { let seed = 0; }
+         let key = Keyboard.keyPressed();
+      }
+      if (key = 140) { let quit = true; }
+      while (~(key = 0)) {            // espera soltar a tecla
+         let key = Keyboard.keyPressed();
+      }
+      return seed;
+   }
+
+   /** Caixa de Game Over no centro da tela. caught = true: pessoa pega. */
+   method void showGameOver(boolean caught) {
+      do Screen.setColor(true);
+      do Screen.drawRectangle(110, 90, 402, 150);
+      do Screen.setColor(false);
+      do Screen.drawRectangle(113, 93, 399, 147);
+
+      do Output.moveCursor(10, 18);
+      if (caught) { do printText("Game Over - Jogador 2 perdeu"); }
+      else        { do printText("Game Over - Jogador 1 perdeu"); }
+      do Output.moveCursor(12, 20);
+      do printText("Reiniciando... (ESC sai)");
+      return;
+   }
+
+   /** Espera ~3 s antes de reiniciar, ainda permitindo sair com ESC. */
+   method void waitRestart() {
+      var int i;
+      let i = 0;
+      while ((i < 30) & (~quit)) {
+         if (Keyboard.keyPressed() = 140) { let quit = true; }
+         do Sys.wait(100);
+         let i = i + 1;
+      }
+      return;
    }
 }
-
-
-
