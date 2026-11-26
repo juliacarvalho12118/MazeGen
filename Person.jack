@@ -1,3 +1,132 @@
+// Parte do projeto Ghost Multiplayer (Projeto 6).
+
+/**
+ * Representa a PESSOA (Jogador 2), que foge do fantasma.
+ *
+ * Tem exatamente o mesmo comportamento do Ghost (mesma grade de celulas
+ * 16x16, mesmas direcoes, mesmos limites); so muda o sprite.
+ *
+ *   col: 0..31, row: 0..15 (a linha 0 e reservada para o relogio)
+ *   Direcao: 0 = parado, 1 = cima, 2 = baixo, 3 = esquerda, 4 = direita.
+ *
+ * Assim como o Ghost, esta classe nao conhece o mapa: o GhostGame verifica
+ * se a proxima celula esta livre antes de mandar mover.
+ */
 class Person {
 
+   field int col, row;     // posicao atual, em celulas
+   field int direction;    // direcao atual de deslocamento
+
+   /** Cria a pessoa na celula (Acol, Arow). Nao desenha: use reset(). */
+   constructor Person new(int Acol, int Arow) {
+      let col = Acol;
+      let row = Arow;
+      let direction = 0;
+      return this;
+   }
+
+   /** Libera a memoria da pessoa. */
+   method void dispose() {
+      do Memory.deAlloc(this);
+      return;
+   }
+
+   // ---------------- Consultas ----------------
+
+   method int getCol() { return col; }
+   method int getRow() { return row; }
+   method int getDirection() { return direction; }
+
+   /** Coluna da celula seguinte se a pessoa continuar na direcao atual. */
+   method int nextCol() {
+      if (direction = 3) { return col - 1; }   // esquerda
+      if (direction = 4) { return col + 1; }   // direita
+      return col;
+   }
+
+   /** Linha da celula seguinte se a pessoa continuar na direcao atual. */
+   method int nextRow() {
+      if (direction = 1) { return row - 1; }   // cima
+      if (direction = 2) { return row + 1; }   // baixo
+      return row;
+   }
+
+   // ---------------- Controle ----------------
+
+   /** Define a direcao; a pessoa passa a andar sozinha nessa direcao. */
+   method void setDirection(int d) {
+      let direction = d;
+      return;
+   }
+
+   /** Para a pessoa (tecla de parar ou batida em obstaculo). */
+   method void stop() {
+      let direction = 0;
+      return;
+   }
+
+   /**
+    * Coloca a pessoa em (Acol, Arow) SEM apagar a posicao antiga e a desenha.
+    * Usado no inicio de cada rodada, depois que o mapa ja foi desenhado.
+    */
+   method void reset(int Acol, int Arow) {
+      let col = Acol;
+      let row = Arow;
+      let direction = 0;
+      do draw();
+      return;
+   }
+
+   /** Move a pessoa para a celula (Acol, Arow), apagando a antiga. */
+   method void moveTo(int Acol, int Arow) {
+      do erase();
+      let col = Acol;
+      let row = Arow;
+      do draw();
+      return;
+   }
+
+   // ---------------- Desenho ----------------
+
+   /** Desenha a pessoa na tela. */
+   method void draw() {
+      do drawPerson((row * 512) + col);
+      return;
+   }
+
+   /** Apaga a pessoa (pinta de branco a celula de 16x16 pixels). */
+   method void erase() {
+      var int x, y;
+      let x = col * 16;
+      let y = row * 16;
+      do Screen.setColor(false);
+      do Screen.drawRectangle(x, y, x + 15, y + 15);
+      return;
+   }
+
+   /**
+    * Sprite 16x16 da pessoa (cabeca, tronco, bracos e pernas).
+    * Cada Memory.poke escreve uma linha de 16 pixels (bit 0 = pixel da esquerda).
+    */
+   method void drawPerson(int location) {
+      var int memAddress;
+      let memAddress = 16384 + location;
+      do Memory.poke(memAddress+0, 0);
+      do Memory.poke(memAddress+32, 960);
+      do Memory.poke(memAddress+64, 2016);
+      do Memory.poke(memAddress+96, 2016);
+      do Memory.poke(memAddress+128, 960);
+      do Memory.poke(memAddress+160, 384);
+      do Memory.poke(memAddress+192, 4080);
+      do Memory.poke(memAddress+224, 8184);
+      do Memory.poke(memAddress+256, 15324);
+      do Memory.poke(memAddress+288, 15324);
+      do Memory.poke(memAddress+320, 13260);
+      do Memory.poke(memAddress+352, 960);
+      do Memory.poke(memAddress+384, 960);
+      do Memory.poke(memAddress+416, 1632);
+      do Memory.poke(memAddress+448, 1632);
+      do Memory.poke(memAddress+480, 3696);
+      return;
+   }
 }
