@@ -1,3 +1,18 @@
+/**
+ * A tela tem 512 x 256 pixels. Cada celula do labirinto e um quadrado de
+ * 16 x 16 pixels, entao o mapa tem 32 colunas x 15 linhas.
+ *
+ * O labirinto fica guardado em grid: uma lista de 480 posicoes (15 x 32)
+ * em que  1 = parede  e  0 = corredor.
+ * A posicao de uma celula na lista e:  linha * 32 + coluna.
+ *
+ * Existem 3 tipos de labirinto (escolhidos em newMaze):
+ *   0 = mapa FIXO, desenhado a mao (guardado em 'data')
+ *   1 = labirinto GERADO, fechado (poucos atalhos)
+ *   2 = labirinto GERADO, aberto (muitos atalhos)
+ *            
+ */
+
 class Maze {
     field Array data;
     field Array pow2;
@@ -11,6 +26,7 @@ class Maze {
         let cols = 32;
         let rows = 15;
 
+         // potencias de 2
         let pow2 = Array.new(16);
         let pow2[0] = 1;
         let i = 1;
@@ -19,10 +35,12 @@ class Maze {
             let i = i+1;
         }
 
+        // Reserva a memoria das listas
         let grid = Array.new(480);
         let stack = Array.new(105);
         let dirs = Array.new(4);
 
+        // mapa fixo
         let data = Array.new(30);
         let data[0] = -1;
         let data[1] = -1;
@@ -55,11 +73,14 @@ class Maze {
         let data[28] = -1;
         let data[29] = -1;
 
+        // Começa com o mapa fixo ja carregado no grid
         do loadFixed();
         return this;
     }
 
     method void dispose() {
+
+        // Libera cada lista e por fim o proprio objeto
         do data.dispose();
         do pow2.dispose();
         do grid.dispose();
@@ -72,6 +93,7 @@ class Maze {
     method int getCols() {return cols;}
     method int getRows() {return rows;}
 
+    // sorteia o tipo: 0 = fixo, 1 = gerado fechado, 2 = gerado aberto
     method void newMaze(int kind) {
         if (kind=0) {
             do loadFixed();
@@ -85,6 +107,7 @@ class Maze {
         return;
     }
 
+    // Copia o mapa fixo (guardado em 'data') para o grid, bit por bit 
     method void loadFixed() {
         var int r, c, w;
         let r=0;
@@ -104,6 +127,7 @@ class Maze {
         return;
     }
 
+    // gera um labirinto aleatorio
     method void generate(int extra) {
         var int i, sp, cur, cr, cc, n, d, k, tries, r, c, todo;
         let i = 0;
@@ -178,6 +202,7 @@ class Maze {
         return;
     }
 
+    // true se a celula e parede
     method boolean isWall(int col, int row) {
         if ((col<0) | (row<0) | (col>(cols-1)) | ((row>(rows - 1)))) {
             return true;
@@ -185,6 +210,7 @@ class Maze {
         return (grid[(row*cols) + col] = 1);
     }
 
+    // desenha cada parede como um quadrado preto de 16 x 16 pixels
     method void draw() {
         var int r, c;
         do Screen.setColor(true);
@@ -202,6 +228,7 @@ class Maze {
         return;
     }
 
+    // sorteia uma celula de corredor diferente de avoid
     method int randomFloorCell(int avoid) {
         var int c, r, idx;
         var boolean ok;
