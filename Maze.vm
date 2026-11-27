@@ -1,0 +1,1060 @@
+function Maze.new 1
+    push constant 7
+    call Memory.alloc 1
+    pop pointer 0
+    push constant 32
+    pop this 5
+    push constant 15
+    pop this 6
+    push constant 16
+    call Array.new 1
+    pop this 1
+    push constant 0
+    push this 1
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 1
+    pop local 0
+label Maze_0
+    push local 0
+    push constant 16
+    lt
+    not
+    if-goto Maze_1
+    push local 0
+    push this 1
+    add
+    push local 0
+    push constant 1
+    sub
+    push this 1
+    add
+    pop pointer 1
+    push that 0
+    push local 0
+    push constant 1
+    sub
+    push this 1
+    add
+    pop pointer 1
+    push that 0
+    add
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push local 0
+    push constant 1
+    add
+    pop local 0
+    goto Maze_0
+label Maze_1
+    push constant 480
+    call Array.new 1
+    pop this 2
+    push constant 105
+    call Array.new 1
+    pop this 3
+    push constant 4
+    call Array.new 1
+    pop this 4
+    push constant 30
+    call Array.new 1
+    pop this 0
+    push constant 0
+    push this 0
+    add
+    push constant 1
+    neg
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 1
+    push this 0
+    add
+    push constant 1
+    neg
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 2
+    push this 0
+    add
+    push constant 32767
+    neg
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 3
+    push this 0
+    add
+    push constant 32767
+    neg
+    push constant 1
+    sub
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 4
+    push this 0
+    add
+    push constant 9235
+    neg
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 5
+    push this 0
+    add
+    push constant 18693
+    neg
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 6
+    push this 0
+    add
+    push constant 32751
+    neg
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 7
+    push this 0
+    add
+    push constant 32256
+    neg
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 8
+    push this 0
+    add
+    push constant 28541
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 9
+    push this 0
+    add
+    push constant 20547
+    neg
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 10
+    push this 0
+    add
+    push constant 2113
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 11
+    push this 0
+    add
+    push constant 32496
+    neg
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 12
+    push this 0
+    add
+    push constant 5155
+    neg
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 13
+    push this 0
+    add
+    push constant 17705
+    neg
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 14
+    push this 0
+    add
+    push constant 8257
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 15
+    push this 0
+    add
+    push constant 32240
+    neg
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 16
+    push this 0
+    add
+    push constant 20643
+    neg
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 17
+    push this 0
+    add
+    push constant 17673
+    neg
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 18
+    push this 0
+    add
+    push constant 8517
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 19
+    push this 0
+    add
+    push constant 24060
+    neg
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 20
+    push this 0
+    add
+    push constant 651
+    neg
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 21
+    push this 0
+    add
+    push constant 21514
+    neg
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 22
+    push this 0
+    add
+    push constant 261
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 23
+    push this 0
+    add
+    push constant 31742
+    neg
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 24
+    push this 0
+    add
+    push constant 31613
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 25
+    push this 0
+    add
+    push constant 1041
+    neg
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 26
+    push this 0
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 27
+    push this 0
+    add
+    push constant 32767
+    neg
+    push constant 1
+    sub
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 28
+    push this 0
+    add
+    push constant 1
+    neg
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 29
+    push this 0
+    add
+    push constant 1
+    neg
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push pointer 0
+    call Maze.loadFixed 1
+    pop temp 0
+    push pointer 0
+    return
+function Maze.dispose 0
+    push argument 0
+    pop pointer 0
+    push this 0
+    call Array.dispose 1
+    pop temp 0
+    push this 1
+    call Array.dispose 1
+    pop temp 0
+    push this 2
+    call Array.dispose 1
+    pop temp 0
+    push this 3
+    call Array.dispose 1
+    pop temp 0
+    push this 4
+    call Array.dispose 1
+    pop temp 0
+    push pointer 0
+    call Memory.deAlloc 1
+    pop temp 0
+    push constant 0
+    return
+function Maze.getCols 0
+    push argument 0
+    pop pointer 0
+    push this 5
+    return
+function Maze.getRows 0
+    push argument 0
+    pop pointer 0
+    push this 6
+    return
+function Maze.newMaze 0
+    push argument 0
+    pop pointer 0
+    push argument 1
+    push constant 0
+    eq
+    not
+    if-goto Maze_3
+    push pointer 0
+    call Maze.loadFixed 1
+    pop temp 0
+    push constant 0
+    return
+    goto Maze_2
+label Maze_3
+label Maze_2
+    push argument 1
+    push constant 1
+    eq
+    not
+    if-goto Maze_5
+    push pointer 0
+    push constant 8
+    call Maze.generate 2
+    pop temp 0
+    push constant 0
+    return
+    goto Maze_4
+label Maze_5
+label Maze_4
+    push pointer 0
+    push constant 45
+    call Maze.generate 2
+    pop temp 0
+    push constant 0
+    return
+function Maze.loadFixed 3
+    push argument 0
+    pop pointer 0
+    push constant 0
+    pop local 0
+label Maze_6
+    push local 0
+    push this 6
+    lt
+    not
+    if-goto Maze_7
+    push constant 0
+    pop local 1
+label Maze_8
+    push local 1
+    push this 5
+    lt
+    not
+    if-goto Maze_9
+    push local 0
+    push local 0
+    add
+    push local 1
+    push constant 16
+    call Math.divide 2
+    add
+    push this 0
+    add
+    pop pointer 1
+    push that 0
+    pop local 2
+    push local 2
+    push local 1
+    push constant 15
+    and
+    push this 1
+    add
+    pop pointer 1
+    push that 0
+    and
+    push constant 0
+    eq
+    not
+    if-goto Maze_11
+    push local 0
+    push this 5
+    call Math.multiply 2
+    push local 1
+    add
+    push this 2
+    add
+    push constant 0
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    goto Maze_10
+label Maze_11
+    push local 0
+    push this 5
+    call Math.multiply 2
+    push local 1
+    add
+    push this 2
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+label Maze_10
+    push local 1
+    push constant 1
+    add
+    pop local 1
+    goto Maze_8
+label Maze_9
+    push local 0
+    push constant 1
+    add
+    pop local 0
+    goto Maze_6
+label Maze_7
+    push constant 0
+    return
+function Maze.generate 12
+    push argument 0
+    pop pointer 0
+    push constant 0
+    pop local 0
+label Maze_12
+    push local 0
+    push constant 480
+    lt
+    not
+    if-goto Maze_13
+    push local 0
+    push this 2
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push local 0
+    push constant 1
+    add
+    pop local 0
+    goto Maze_12
+label Maze_13
+    push this 5
+    push constant 1
+    add
+    pop local 2
+    push local 2
+    push this 2
+    add
+    push constant 0
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 0
+    push this 3
+    add
+    push local 2
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push constant 1
+    pop local 1
+label Maze_14
+    push local 1
+    push constant 0
+    gt
+    not
+    if-goto Maze_15
+    push local 1
+    push constant 1
+    sub
+    push this 3
+    add
+    pop pointer 1
+    push that 0
+    pop local 2
+    push local 2
+    push this 5
+    call Math.divide 2
+    pop local 3
+    push local 2
+    push local 3
+    push this 5
+    call Math.multiply 2
+    sub
+    pop local 4
+    push constant 0
+    pop local 5
+    push local 3
+    push constant 2
+    gt
+    not
+    if-goto Maze_17
+    push local 2
+    push this 5
+    sub
+    push this 5
+    sub
+    push this 2
+    add
+    pop pointer 1
+    push that 0
+    push constant 1
+    eq
+    not
+    if-goto Maze_19
+    push local 5
+    push this 4
+    add
+    push constant 0
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push local 5
+    push constant 1
+    add
+    pop local 5
+    goto Maze_18
+label Maze_19
+label Maze_18
+    goto Maze_16
+label Maze_17
+label Maze_16
+    push local 3
+    push constant 12
+    lt
+    not
+    if-goto Maze_21
+    push local 2
+    push this 5
+    add
+    push this 5
+    add
+    push this 2
+    add
+    pop pointer 1
+    push that 0
+    push constant 1
+    eq
+    not
+    if-goto Maze_23
+    push local 5
+    push this 4
+    add
+    push constant 1
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push local 5
+    push constant 1
+    add
+    pop local 5
+    goto Maze_22
+label Maze_23
+label Maze_22
+    goto Maze_20
+label Maze_21
+label Maze_20
+    push local 4
+    push constant 2
+    gt
+    not
+    if-goto Maze_25
+    push local 2
+    push constant 2
+    add
+    push this 2
+    add
+    pop pointer 1
+    push that 0
+    push constant 1
+    eq
+    not
+    if-goto Maze_27
+    push local 5
+    push this 4
+    add
+    push constant 3
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push local 5
+    push constant 1
+    add
+    pop local 5
+    goto Maze_26
+label Maze_27
+label Maze_26
+    goto Maze_24
+label Maze_25
+label Maze_24
+    push local 4
+    push constant 28
+    lt
+    not
+    if-goto Maze_29
+    push local 2
+    push constant 2
+    add
+    push this 2
+    add
+    pop pointer 1
+    push that 0
+    push constant 1
+    eq
+    not
+    if-goto Maze_31
+    push local 5
+    push this 4
+    add
+    push constant 3
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push local 5
+    push constant 1
+    add
+    pop local 5
+    goto Maze_30
+label Maze_31
+label Maze_30
+    goto Maze_28
+label Maze_29
+label Maze_28
+    push local 5
+    push constant 0
+    eq
+    not
+    if-goto Maze_33
+    push local 1
+    push constant 1
+    sub
+    pop local 1
+    goto Maze_32
+label Maze_33
+    push local 5
+    call Random.between 1
+    push this 4
+    add
+    pop pointer 1
+    push that 0
+    pop local 6
+    push local 6
+    push constant 0
+    eq
+    not
+    if-goto Maze_35
+    push this 5
+    neg
+    pop local 7
+    goto Maze_34
+label Maze_35
+label Maze_34
+    push local 6
+    push constant 1
+    eq
+    not
+    if-goto Maze_37
+    push this 5
+    pop local 7
+    goto Maze_36
+label Maze_37
+label Maze_36
+    push local 6
+    push constant 2
+    eq
+    not
+    if-goto Maze_39
+    push constant 1
+    neg
+    pop local 7
+    goto Maze_38
+label Maze_39
+label Maze_38
+    push local 6
+    push constant 3
+    eq
+    not
+    if-goto Maze_41
+    push constant 1
+    pop local 7
+    goto Maze_40
+label Maze_41
+label Maze_40
+    push local 2
+    push local 7
+    add
+    push this 2
+    add
+    push constant 0
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push local 2
+    push local 7
+    add
+    push local 7
+    add
+    push this 2
+    add
+    push constant 0
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push local 1
+    push this 3
+    add
+    push local 2
+    push local 7
+    add
+    push local 7
+    add
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push local 1
+    push constant 1
+    add
+    pop local 1
+label Maze_32
+    goto Maze_14
+label Maze_15
+    push argument 1
+    pop local 11
+    push argument 1
+    push constant 10
+    call Math.multiply 2
+    pop local 8
+label Maze_42
+    push local 11
+    push constant 0
+    gt
+    push local 8
+    push constant 0
+    gt
+    and
+    not
+    if-goto Maze_43
+    push local 8
+    push constant 1
+    sub
+    pop local 8
+    push constant 1
+    push constant 13
+    call Random.between 1
+    add
+    pop local 9
+    push constant 1
+    push constant 29
+    call Random.between 1
+    add
+    pop local 10
+    push local 9
+    push this 5
+    call Math.multiply 2
+    push local 10
+    add
+    pop local 0
+    push local 0
+    push this 2
+    add
+    pop pointer 1
+    push that 0
+    push constant 1
+    eq
+    not
+    if-goto Maze_45
+    push local 0
+    push this 5
+    sub
+    push this 2
+    add
+    pop pointer 1
+    push that 0
+    push constant 0
+    eq
+    push local 0
+    push this 5
+    add
+    push this 2
+    add
+    pop pointer 1
+    push that 0
+    push constant 0
+    eq
+    and
+    push local 0
+    push constant 1
+    sub
+    push this 2
+    add
+    pop pointer 1
+    push that 0
+    push constant 0
+    eq
+    push local 0
+    push constant 1
+    add
+    push this 2
+    add
+    pop pointer 1
+    push that 0
+    push constant 0
+    eq
+    and
+    or
+    not
+    if-goto Maze_47
+    push local 0
+    push this 2
+    add
+    push constant 0
+    pop temp 0
+    pop pointer 1
+    push temp 0
+    pop that 0
+    push local 11
+    push constant 1
+    sub
+    pop local 11
+    goto Maze_46
+label Maze_47
+label Maze_46
+    goto Maze_44
+label Maze_45
+label Maze_44
+    goto Maze_42
+label Maze_43
+    push constant 0
+    return
+function Maze.isWall 0
+    push argument 0
+    pop pointer 0
+    push argument 1
+    push constant 0
+    lt
+    push argument 2
+    push constant 0
+    lt
+    or
+    push argument 1
+    push this 5
+    push constant 1
+    sub
+    gt
+    or
+    push argument 2
+    push this 6
+    push constant 1
+    sub
+    gt
+    or
+    not
+    if-goto Maze_49
+    push constant 1
+    neg
+    return
+    goto Maze_48
+label Maze_49
+label Maze_48
+    push argument 2
+    push this 5
+    call Math.multiply 2
+    push argument 1
+    add
+    push this 2
+    add
+    pop pointer 1
+    push that 0
+    push constant 1
+    eq
+    return
+function Maze.draw 2
+    push argument 0
+    pop pointer 0
+    push constant 1
+    neg
+    call Screen.setColor 1
+    pop temp 0
+    push constant 0
+    pop local 0
+label Maze_50
+    push local 0
+    push this 6
+    lt
+    not
+    if-goto Maze_51
+    push constant 0
+    pop local 1
+label Maze_52
+    push local 1
+    push this 5
+    lt
+    not
+    if-goto Maze_53
+    push pointer 0
+    push local 1
+    push local 0
+    call Maze.isWall 3
+    not
+    if-goto Maze_55
+    push local 1
+    push constant 16
+    call Math.multiply 2
+    push local 0
+    push constant 16
+    call Math.multiply 2
+    push local 1
+    push constant 16
+    call Math.multiply 2
+    push constant 15
+    add
+    push local 0
+    push constant 16
+    call Math.multiply 2
+    push constant 15
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    goto Maze_54
+label Maze_55
+label Maze_54
+    push local 1
+    push constant 1
+    add
+    pop local 1
+    goto Maze_52
+label Maze_53
+    push local 0
+    push constant 1
+    add
+    pop local 0
+    goto Maze_50
+label Maze_51
+    push constant 0
+    return
+function Maze.randomFloorCell 4
+    push argument 0
+    pop pointer 0
+    push constant 0
+    pop local 3
+    push constant 0
+    pop local 2
+label Maze_56
+    push local 3
+    not
+    not
+    if-goto Maze_57
+    push this 5
+    call Random.between 1
+    pop local 0
+    push this 6
+    call Random.between 1
+    pop local 1
+    push local 1
+    push this 5
+    call Math.multiply 2
+    push local 0
+    add
+    pop local 2
+    push pointer 0
+    push local 0
+    push local 1
+    call Maze.isWall 3
+    not
+    push local 2
+    push argument 1
+    eq
+    not
+    and
+    pop local 3
+    goto Maze_56
+label Maze_57
+    push local 2
+    return

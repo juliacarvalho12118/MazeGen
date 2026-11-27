@@ -1,42 +1,220 @@
-// ATENCAO: Maze SO PARA TESTE (stub). NAO e o Maze do projeto.
-// Serve apenas para compilar/testar Ghost, Person e GhostGame enquanto o
-// Maze de verdade nao fica pronto. Mesma interface que o GhostGame espera.
 class Maze {
+    field Array data;
+    field Array pow2;
+    field Array grid;
+    field Array stack;
+    field Array dirs;
+    field int cols, rows;
 
-   constructor Maze new() {
-      return this;
-   }
+    constructor Maze new() {
+        var int i;
+        let cols = 32;
+        let rows = 15;
 
-   method void dispose() {
-      do Memory.deAlloc(this);
-      return;
-   }
+        let pow2 = Array.new(16);
+        let pow2[0] = 1;
+        let i = 1;
+        while (i<16) {
+            let pow2[i] = pow2[i-1] + pow2[i-1];
+            let i = i+1;
+        }
 
-   /** true se a celula (col 0..31, row 1..15) e parede. */
-   method boolean isWall(int col, int row) {
-      if ((col = 0) | (col = 31)) { return true; }
-      if ((row = 1) | (row = 15)) { return true; }
-      if ((col = 8) & ((row > 3) & (row < 15))) { return true; }
-      if ((col = 16) & ((row > 1) & (row < 12))) { return true; }
-      if ((row = 8) & ((col > 16) & (col < 26))) { return true; }
-      return false;
-   }
+        let grid = Array.new(480);
+        let stack = Array.new(105);
+        let dirs = Array.new(4);
 
-   /** Desenha as paredes (linhas 1..15). */
-   method void draw() {
-      var int c, r;
-      do Screen.setColor(true);
-      let r = 1;
-      while (r < 16) {
-         let c = 0;
-         while (c < 32) {
-            if (isWall(c, r)) {
-               do Screen.drawRectangle(c * 16, r * 16, (c * 16) + 15, (r * 16) + 15);
+        let data = Array.new(30);
+        let data[0] = -1;
+        let data[1] = -1;
+        let data[2] = -32767;
+        let data[3] = (-32767 - 1);
+        let data[4] = -9235;
+        let data[5] = -18693;
+        let data[6] = -32751;
+        let data[7] = -32256;
+        let data[8] = 28541;
+        let data[9] = -20547;
+        let data[10] = 2113;
+        let data[11] = -32496;
+        let data[12] = -5155;
+        let data[13] = -17705;
+        let data[14] = 8257;
+        let data[15] = -32240;
+        let data[16] = -20643;
+        let data[17] = -17673;
+        let data[18] = 8517;
+        let data[19] = -24060;
+        let data[20] = -651;
+        let data[21] = -21514;
+        let data[22] = 261;
+        let data[23] = -31742;
+        let data[24] = 31613;
+        let data[25] = -1041;
+        let data[26] = 1;
+        let data[27] = (-32767 - 1);
+        let data[28] = -1;
+        let data[29] = -1;
+
+        do loadFixed();
+        return this;
+    }
+
+    method void dispose() {
+        do data.dispose();
+        do pow2.dispose();
+        do grid.dispose();
+        do stack.dispose();
+        do dirs.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method int getCols() {return cols;}
+    method int getRows() {return rows;}
+
+    method void newMaze(int kind) {
+        if (kind=0) {
+            do loadFixed();
+            return;
+        }
+        if (kind=1) {
+            do generate(8);
+            return;
+        }
+        do generate(45);
+        return;
+    }
+
+    method void loadFixed() {
+        var int r, c, w;
+        let r=0;
+        while (r<rows) {
+            let c = 0;
+            while (c < cols) {
+                let w = data[(r+r) + (c/16)];
+                if ((w & pow2[c & 15]) = 0) {
+                    let grid[(r*cols) + c] = 0;
+                } else {
+                    let grid[(r*cols) + c] = 1;
+                }
+                let c = c+1;
             }
-            let c = c + 1;
-         }
-         let r = r + 1;
-      }
-      return;
-   }
+            let r = r+1;
+        }
+        return;
+    }
+
+    method void generate(int extra) {
+        var int i, sp, cur, cr, cc, n, d, k, tries, r, c, todo;
+        let i = 0;
+        while (i<480) {
+            let grid[i] = 1;
+            let i = i+1;
+        }
+
+        let cur = cols + 1;
+        let grid[cur] = 0;
+        let stack[0] = cur;
+        let sp = 1;
+        while (sp>0) {
+            let cur = stack[sp-1];
+            let cr = cur/cols;
+            let cc = cur - (cr*cols);
+            let n = 0;
+            if (cr>2) {
+                if (grid[cur - cols - cols] = 1) {
+                    let dirs[n] = 0;
+                    let n = n+1;
+                }
+            }
+            if (cr<12) {
+                if (grid[cur + cols + cols] = 1) {
+                    let dirs[n] = 1;
+                    let n = n + 1;
+                }
+            }
+            if (cc>2) {
+                if (grid[cur + 2] = 1) {
+                    let dirs[n] = 3;
+                    let n = n+1;
+                }
+            }
+            if (cc<28) {
+                if (grid[cur + 2] = 1) {
+                    let dirs[n] = 3;
+                    let n = n+1;
+                }
+            }
+
+            if (n = 0) {
+                let sp = sp-1;
+            } else {
+                let d = dirs[Random.between(n)];
+                if (d = 0) { let k = -cols;}
+                if (d = 1) { let k = cols;}
+                if (d = 2) { let k = -1;}
+                if (d = 3) { let k = 1;}
+                let grid[cur + k] = 0;
+                let grid[cur + k + k] = 0;
+                let stack[sp] = cur + k + k;
+                let sp = sp + 1;
+            }
+        }
+
+        let todo = extra;
+        let tries = extra * 10;
+        while ((todo>0) & (tries>0)) {
+            let tries = tries - 1;
+            let r = 1 + Random.between(13);
+            let c = 1 + Random.between(29);
+            let i = (r*cols) + c;
+            if (grid[i] = 1) {
+                if (((grid[i - cols] = 0) & (grid[i + cols] = 0)) | ((grid[i - 1] = 0) & (grid[i + 1] = 0))) {
+                    let grid[i] = 0;
+                    let todo = todo - 1;
+                }
+            }
+        }
+        return;
+    }
+
+    method boolean isWall(int col, int row) {
+        if ((col<0) | (row<0) | (col>(cols-1)) | ((row>(rows - 1)))) {
+            return true;
+        }
+        return (grid[(row*cols) + col] = 1);
+    }
+
+    method void draw() {
+        var int r, c;
+        do Screen.setColor(true);
+        let r=0;
+        while (r<rows) {
+            let c = 0;
+            while (c<cols) {
+                if (isWall(c, r)) {
+                    do Screen.drawRectangle(c * 16, r * 16, (c * 16) + 15, (r * 16) + 15);
+                }
+                let c = c+1;
+            }
+            let r = r+1;
+        }
+        return;
+    }
+
+    method int randomFloorCell(int avoid) {
+        var int c, r, idx;
+        var boolean ok;
+        let ok = false;
+        let idx = 0;
+        while (~ok) {
+            let c = Random.between(cols);
+            let r = Random.between(rows);
+            let idx = (r*cols) + c;
+            let ok = (~isWall(c, r)) & (~(idx = avoid));
+        }
+        return idx;
+    }
 }
+
+

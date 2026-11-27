@@ -1,178 +1,1480 @@
 function GhostGame.new 0
-    push constant 3
+    push constant 8
     call Memory.alloc 1
     pop pointer 0
+    call Maze.new 0
+    pop this 0
     push constant 0
-    push constant 0
+    push constant 1
     call Ghost.new 2
+    pop this 1
+    push constant 0
+    push constant 1
+    call Person.new 2
     pop this 2
     push constant 19
     call Random.new 1
-    pop this 1
+    pop this 3
     push constant 0
-    pop this 0
+    pop this 4
+    push constant 0
+    pop this 5
+    push constant 30
+    pop this 6
+    push constant 70
+    pop this 7
     push pointer 0
     return
 function GhostGame.dispose 0
     push argument 0
     pop pointer 0
-    push this 2
+    push this 1
     call Ghost.dispose 1
+    pop temp 0
+    push this 2
+    call Person.dispose 1
+    pop temp 0
+    push this 3
+    call Random.dispose 1
+    pop temp 0
+    push this 0
+    call Maze.dispose 1
     pop temp 0
     push pointer 0
     call Memory.deAlloc 1
     pop temp 0
     push constant 0
     return
-function GhostGame.moveGhost 0
+function GhostGame.run 2
     push argument 0
     pop pointer 0
-    push this 0
-    push constant 1
-    eq
+    push pointer 0
+    call GhostGame.showStartScreen 1
+    pop local 0
+    push this 4
+    not
     not
     if-goto GhostGame_1
-    push this 2
-    call Ghost.moveUp 1
+    push this 3
+    call Random.dispose 1
     pop temp 0
+    push local 0
+    call Random.new 1
+    pop this 3
     goto GhostGame_0
 label GhostGame_1
 label GhostGame_0
-    push this 0
-    push constant 2
-    eq
+label GhostGame_2
+    push this 4
+    not
     not
     if-goto GhostGame_3
-    push this 2
-    call Ghost.moveDown 1
+    push pointer 0
+    call GhostGame.newRound 1
     pop temp 0
-    goto GhostGame_2
-label GhostGame_3
-label GhostGame_2
-    push this 0
-    push constant 3
-    eq
+    push pointer 0
+    push this 6
+    push constant 0
+    push constant 1
+    call GhostGame.runPhase 4
+    pop local 1
+    push local 1
+    not
+    push this 4
+    not
+    and
     not
     if-goto GhostGame_5
-    push this 2
-    call Ghost.moveLeft 1
-    pop temp 0
+    push pointer 0
+    push this 7
+    push constant 1
+    neg
+    push constant 2
+    call GhostGame.runPhase 4
+    pop local 1
     goto GhostGame_4
 label GhostGame_5
 label GhostGame_4
-    push this 0
-    push constant 4
-    eq
+    push this 4
+    not
     not
     if-goto GhostGame_7
-    push this 2
-    call Ghost.moveRight 1
+    push pointer 0
+    push local 1
+    call GhostGame.showGameOver 2
+    pop temp 0
+    push pointer 0
+    call GhostGame.waitRestart 1
     pop temp 0
     goto GhostGame_6
 label GhostGame_7
 label GhostGame_6
-    push constant 5
-    call Sys.wait 1
+    goto GhostGame_2
+label GhostGame_3
+    call Screen.clearScreen 0
     pop temp 0
     push constant 0
     return
-function GhostGame.run 2
+function GhostGame.newRound 2
+    push argument 0
+    pop pointer 0
+    call Screen.clearScreen 0
+    pop temp 0
+    push this 0
+    call Maze.draw 1
+    pop temp 0
+    push pointer 0
+    push constant 1
+    neg
+    call GhostGame.randomFreeCell 2
+    pop local 0
+    push pointer 0
+    push local 0
+    call GhostGame.randomFreeCell 2
+    pop local 1
+    push this 1
+    push local 0
+    push constant 31
+    and
+    push local 0
+    push constant 32
+    call Math.divide 2
+    call Ghost.reset 3
+    pop temp 0
+    push this 2
+    push local 1
+    push constant 31
+    and
+    push local 1
+    push constant 32
+    call Math.divide 2
+    call Person.reset 3
+    pop temp 0
+    push constant 0
+    return
+function GhostGame.randomFreeCell 4
     push argument 0
     pop pointer 0
     push constant 0
-    pop local 1
+    pop local 3
 label GhostGame_8
-    push local 1
+    push local 3
     not
     not
     if-goto GhostGame_9
-label GhostGame_10
+    push this 3
+    push constant 511
+    call Random.randRange 2
+    pop local 0
     push local 0
+    push constant 31
+    and
+    pop local 1
+    push local 0
+    push constant 32
+    call Math.divide 2
+    pop local 2
+    push local 2
     push constant 0
-    eq
+    gt
     not
     if-goto GhostGame_11
-    call Keyboard.keyPressed 0
-    pop local 0
-    push pointer 0
-    call GhostGame.moveGhost 1
-    pop temp 0
-    push constant 50
-    call Sys.wait 1
-    pop temp 0
-    goto GhostGame_10
-label GhostGame_11
-    push local 0
-    push constant 81
-    eq
+    push this 0
+    push local 1
+    push local 2
+    call Maze.isWall 3
+    not
     not
     if-goto GhostGame_13
-    push constant 1
-    neg
-    pop local 1
-    goto GhostGame_12
-label GhostGame_13
-label GhostGame_12
     push local 0
-    push constant 131
+    push argument 1
     eq
+    not
     not
     if-goto GhostGame_15
     push constant 1
-    pop this 0
+    neg
+    pop local 3
     goto GhostGame_14
 label GhostGame_15
 label GhostGame_14
+    goto GhostGame_12
+label GhostGame_13
+label GhostGame_12
+    goto GhostGame_10
+label GhostGame_11
+label GhostGame_10
+    goto GhostGame_8
+label GhostGame_9
     push local 0
-    push constant 133
-    eq
-    not
-    if-goto GhostGame_17
-    push constant 2
-    pop this 0
-    goto GhostGame_16
-label GhostGame_17
+    return
+function GhostGame.runPhase 4
+    push argument 0
+    pop pointer 0
+    push constant 0
+    pop local 3
+    push argument 1
+    pop local 0
+    push constant 1
+    neg
+    pop local 2
+    push argument 2
+    pop this 5
 label GhostGame_16
     push local 0
-    push constant 130
+    push constant 0
+    gt
+    push local 3
+    not
+    and
+    push this 4
+    not
+    and
+    not
+    if-goto GhostGame_17
+    push local 0
+    push constant 9
+    add
+    push constant 10
+    call Math.divide 2
+    pop local 1
+    push local 1
+    push local 2
     eq
     not
+    not
     if-goto GhostGame_19
-    push constant 3
-    pop this 0
+    push local 1
+    pop local 2
+    push pointer 0
+    push argument 3
+    push local 1
+    call GhostGame.showHud 3
+    pop temp 0
     goto GhostGame_18
 label GhostGame_19
 label GhostGame_18
+    push pointer 0
+    call GhostGame.readInput 1
+    pop temp 0
+    push pointer 0
+    call GhostGame.stepPlayers 1
+    pop local 3
     push local 0
+    push constant 1
+    sub
+    pop local 0
+    goto GhostGame_16
+label GhostGame_17
+    push local 3
+    return
+function GhostGame.readInput 2
+    push argument 0
+    pop pointer 0
+    push constant 0
+    pop local 0
+label GhostGame_20
+    push local 0
+    push constant 10
+    lt
+    not
+    if-goto GhostGame_21
+    call Keyboard.keyPressed 0
+    pop local 1
+    push pointer 0
+    push local 1
+    call GhostGame.handleKey 2
+    pop temp 0
+    push constant 10
+    call Sys.wait 1
+    pop temp 0
+    push local 0
+    push constant 1
+    add
+    pop local 0
+    goto GhostGame_20
+label GhostGame_21
+    push constant 0
+    return
+function GhostGame.handleKey 0
+    push argument 0
+    pop pointer 0
+    push argument 1
+    push constant 140
+    eq
+    not
+    if-goto GhostGame_23
+    push constant 1
+    neg
+    pop this 4
+    goto GhostGame_22
+label GhostGame_23
+label GhostGame_22
+    push this 5
+    not
+    if-goto GhostGame_25
+    push argument 1
+    push constant 131
+    eq
+    not
+    if-goto GhostGame_27
+    push this 1
+    push constant 1
+    call Ghost.setDirection 2
+    pop temp 0
+    goto GhostGame_26
+label GhostGame_27
+label GhostGame_26
+    push argument 1
+    push constant 133
+    eq
+    not
+    if-goto GhostGame_29
+    push this 1
+    push constant 2
+    call Ghost.setDirection 2
+    pop temp 0
+    goto GhostGame_28
+label GhostGame_29
+label GhostGame_28
+    push argument 1
+    push constant 130
+    eq
+    not
+    if-goto GhostGame_31
+    push this 1
+    push constant 3
+    call Ghost.setDirection 2
+    pop temp 0
+    goto GhostGame_30
+label GhostGame_31
+label GhostGame_30
+    push argument 1
     push constant 132
     eq
     not
-    if-goto GhostGame_21
+    if-goto GhostGame_33
+    push this 1
     push constant 4
-    pop this 0
-    goto GhostGame_20
-label GhostGame_21
-label GhostGame_20
-label GhostGame_22
+    call Ghost.setDirection 2
+    pop temp 0
+    goto GhostGame_32
+label GhostGame_33
+label GhostGame_32
+    push argument 1
+    push constant 46
+    eq
+    not
+    if-goto GhostGame_35
+    push this 1
+    call Ghost.stop 1
+    pop temp 0
+    goto GhostGame_34
+label GhostGame_35
+label GhostGame_34
+    goto GhostGame_24
+label GhostGame_25
+label GhostGame_24
+    push argument 1
+    push constant 119
+    eq
+    push argument 1
+    push constant 87
+    eq
+    or
+    not
+    if-goto GhostGame_37
+    push this 2
+    push constant 1
+    call Person.setDirection 2
+    pop temp 0
+    goto GhostGame_36
+label GhostGame_37
+label GhostGame_36
+    push argument 1
+    push constant 115
+    eq
+    push argument 1
+    push constant 83
+    eq
+    or
+    not
+    if-goto GhostGame_39
+    push this 2
+    push constant 2
+    call Person.setDirection 2
+    pop temp 0
+    goto GhostGame_38
+label GhostGame_39
+label GhostGame_38
+    push argument 1
+    push constant 97
+    eq
+    push argument 1
+    push constant 65
+    eq
+    or
+    not
+    if-goto GhostGame_41
+    push this 2
+    push constant 3
+    call Person.setDirection 2
+    pop temp 0
+    goto GhostGame_40
+label GhostGame_41
+label GhostGame_40
+    push argument 1
+    push constant 100
+    eq
+    push argument 1
+    push constant 68
+    eq
+    or
+    not
+    if-goto GhostGame_43
+    push this 2
+    push constant 4
+    call Person.setDirection 2
+    pop temp 0
+    goto GhostGame_42
+label GhostGame_43
+label GhostGame_42
+    push argument 1
+    push constant 101
+    eq
+    push argument 1
+    push constant 69
+    eq
+    or
+    not
+    if-goto GhostGame_45
+    push this 2
+    call Person.stop 1
+    pop temp 0
+    goto GhostGame_44
+label GhostGame_45
+label GhostGame_44
+    push constant 0
+    return
+function GhostGame.stepPlayers 1
+    push argument 0
+    pop pointer 0
+    push pointer 0
+    call GhostGame.movePerson 1
+    pop temp 0
+    push pointer 0
+    call GhostGame.sameCell 1
+    pop local 0
     push local 0
+    not
+    push this 5
+    and
+    not
+    if-goto GhostGame_47
+    push pointer 0
+    call GhostGame.moveGhost 1
+    pop temp 0
+    push pointer 0
+    call GhostGame.sameCell 1
+    pop local 0
+    goto GhostGame_46
+label GhostGame_47
+label GhostGame_46
+    push local 0
+    return
+function GhostGame.movePerson 2
+    push argument 0
+    pop pointer 0
+    push this 2
+    call Person.getDirection 1
     push constant 0
     eq
     not
     not
-    if-goto GhostGame_23
-    call Keyboard.keyPressed 0
+    if-goto GhostGame_49
+    push this 2
+    call Person.nextCol 1
     pop local 0
+    push this 2
+    call Person.nextRow 1
+    pop local 1
     push pointer 0
-    call GhostGame.moveGhost 1
+    push local 0
+    push local 1
+    call GhostGame.isFree 3
+    not
+    if-goto GhostGame_51
+    push this 2
+    push local 0
+    push local 1
+    call Person.moveTo 3
     pop temp 0
+    goto GhostGame_50
+label GhostGame_51
+    push this 2
+    call Person.stop 1
+    pop temp 0
+label GhostGame_50
+    goto GhostGame_48
+label GhostGame_49
+label GhostGame_48
+    push constant 0
+    return
+function GhostGame.moveGhost 2
+    push argument 0
+    pop pointer 0
+    push this 1
+    call Ghost.getDirection 1
+    push constant 0
+    eq
+    not
+    not
+    if-goto GhostGame_53
+    push this 1
+    call Ghost.nextCol 1
+    pop local 0
+    push this 1
+    call Ghost.nextRow 1
+    pop local 1
+    push pointer 0
+    push local 0
+    push local 1
+    call GhostGame.isFree 3
+    not
+    if-goto GhostGame_55
+    push this 1
+    push local 0
+    push local 1
+    call Ghost.moveTo 3
+    pop temp 0
+    goto GhostGame_54
+label GhostGame_55
+    push this 1
+    call Ghost.stop 1
+    pop temp 0
+label GhostGame_54
+    goto GhostGame_52
+label GhostGame_53
+label GhostGame_52
+    push constant 0
+    return
+function GhostGame.isFree 0
+    push argument 0
+    pop pointer 0
+    push argument 1
+    push constant 0
+    lt
+    not
+    if-goto GhostGame_57
+    push constant 0
+    return
+    goto GhostGame_56
+label GhostGame_57
+label GhostGame_56
+    push argument 1
+    push constant 31
+    gt
+    not
+    if-goto GhostGame_59
+    push constant 0
+    return
+    goto GhostGame_58
+label GhostGame_59
+label GhostGame_58
+    push argument 2
+    push constant 1
+    lt
+    not
+    if-goto GhostGame_61
+    push constant 0
+    return
+    goto GhostGame_60
+label GhostGame_61
+label GhostGame_60
+    push argument 2
+    push constant 15
+    gt
+    not
+    if-goto GhostGame_63
+    push constant 0
+    return
+    goto GhostGame_62
+label GhostGame_63
+label GhostGame_62
+    push this 0
+    push argument 1
+    push argument 2
+    call Maze.isWall 3
+    not
+    return
+function GhostGame.sameCell 0
+    push argument 0
+    pop pointer 0
+    push this 1
+    call Ghost.getCol 1
+    push this 2
+    call Person.getCol 1
+    eq
+    push this 1
+    call Ghost.getRow 1
+    push this 2
+    call Person.getRow 1
+    eq
+    and
+    return
+function GhostGame.printText 0
+    push argument 0
+    pop pointer 0
+    push argument 1
+    call Output.printString 1
+    pop temp 0
+    push argument 1
+    call String.dispose 1
+    pop temp 0
+    push constant 0
+    return
+function GhostGame.showHud 0
+    push argument 0
+    pop pointer 0
+    push constant 0
+    call Screen.setColor 1
+    pop temp 0
+    push constant 0
+    push constant 0
+    push constant 511
+    push constant 13
+    call Screen.drawRectangle 4
+    pop temp 0
+    push constant 0
+    push constant 1
+    call Output.moveCursor 2
+    pop temp 0
+    push argument 1
+    push constant 1
+    eq
+    not
+    if-goto GhostGame_65
+    push pointer 0
+    push constant 16
+    call String.new 1
+    push constant 70
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 110
+    call String.appendChar 2
+    push constant 116
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 115
+    call String.appendChar 2
+    push constant 109
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 112
+    call String.appendChar 2
+    push constant 114
+    call String.appendChar 2
+    push constant 101
+    call String.appendChar 2
+    push constant 115
+    call String.appendChar 2
+    push constant 111
+    call String.appendChar 2
+    push constant 58
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    call GhostGame.printText 2
+    pop temp 0
+    goto GhostGame_64
+label GhostGame_65
+    push pointer 0
+    push constant 16
+    call String.new 1
+    push constant 84
+    call String.appendChar 2
+    push constant 101
+    call String.appendChar 2
+    push constant 109
+    call String.appendChar 2
+    push constant 112
+    call String.appendChar 2
+    push constant 111
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 114
+    call String.appendChar 2
+    push constant 101
+    call String.appendChar 2
+    push constant 115
+    call String.appendChar 2
+    push constant 116
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 110
+    call String.appendChar 2
+    push constant 116
+    call String.appendChar 2
+    push constant 101
+    call String.appendChar 2
+    push constant 58
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    call GhostGame.printText 2
+    pop temp 0
+label GhostGame_64
+    push argument 2
+    call Output.printInt 1
+    pop temp 0
+    push constant 0
+    return
+function GhostGame.showStartScreen 2
+    push argument 0
+    pop pointer 0
+    call Screen.clearScreen 0
+    pop temp 0
+    push constant 6
+    push constant 23
+    call Output.moveCursor 2
+    pop temp 0
+    push pointer 0
+    push constant 17
+    call String.new 1
+    push constant 71
+    call String.appendChar 2
+    push constant 72
+    call String.appendChar 2
+    push constant 79
+    call String.appendChar 2
+    push constant 83
+    call String.appendChar 2
+    push constant 84
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 77
+    call String.appendChar 2
+    push constant 85
+    call String.appendChar 2
+    push constant 76
+    call String.appendChar 2
+    push constant 84
+    call String.appendChar 2
+    push constant 73
+    call String.appendChar 2
+    push constant 80
+    call String.appendChar 2
+    push constant 76
+    call String.appendChar 2
+    push constant 65
+    call String.appendChar 2
+    push constant 89
+    call String.appendChar 2
+    push constant 69
+    call String.appendChar 2
+    push constant 82
+    call String.appendChar 2
+    call GhostGame.printText 2
+    pop temp 0
+    push constant 9
+    push constant 13
+    call Output.moveCursor 2
+    pop temp 0
+    push pointer 0
+    push constant 38
+    call String.new 1
+    push constant 74
+    call String.appendChar 2
+    push constant 111
+    call String.appendChar 2
+    push constant 103
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 100
+    call String.appendChar 2
+    push constant 111
+    call String.appendChar 2
+    push constant 114
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 49
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 40
+    call String.appendChar 2
+    push constant 70
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 110
+    call String.appendChar 2
+    push constant 116
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 115
+    call String.appendChar 2
+    push constant 109
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 41
+    call String.appendChar 2
+    push constant 58
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 115
+    call String.appendChar 2
+    push constant 101
+    call String.appendChar 2
+    push constant 116
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 115
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 124
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 112
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 114
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 114
+    call String.appendChar 2
+    push constant 58
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 46
+    call String.appendChar 2
+    call GhostGame.printText 2
+    pop temp 0
+    push constant 10
+    push constant 13
+    call Output.moveCursor 2
+    pop temp 0
+    push pointer 0
+    push constant 38
+    call String.new 1
+    push constant 74
+    call String.appendChar 2
+    push constant 111
+    call String.appendChar 2
+    push constant 103
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 100
+    call String.appendChar 2
+    push constant 111
+    call String.appendChar 2
+    push constant 114
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
     push constant 50
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 40
+    call String.appendChar 2
+    push constant 80
+    call String.appendChar 2
+    push constant 101
+    call String.appendChar 2
+    push constant 115
+    call String.appendChar 2
+    push constant 115
+    call String.appendChar 2
+    push constant 111
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 41
+    call String.appendChar 2
+    push constant 58
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 87
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 65
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 83
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 68
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 124
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 112
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 114
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 114
+    call String.appendChar 2
+    push constant 58
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 69
+    call String.appendChar 2
+    call GhostGame.printText 2
+    pop temp 0
+    push constant 12
+    push constant 13
+    call Output.moveCursor 2
+    pop temp 0
+    push pointer 0
+    push constant 43
+    call String.new 1
+    push constant 74
+    call String.appendChar 2
+    push constant 111
+    call String.appendChar 2
+    push constant 103
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 100
+    call String.appendChar 2
+    push constant 111
+    call String.appendChar 2
+    push constant 114
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 50
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 118
+    call String.appendChar 2
+    push constant 101
+    call String.appendChar 2
+    push constant 110
+    call String.appendChar 2
+    push constant 99
+    call String.appendChar 2
+    push constant 101
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 115
+    call String.appendChar 2
+    push constant 101
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 102
+    call String.appendChar 2
+    push constant 117
+    call String.appendChar 2
+    push constant 103
+    call String.appendChar 2
+    push constant 105
+    call String.appendChar 2
+    push constant 114
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 116
+    call String.appendChar 2
+    push constant 101
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 111
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 116
+    call String.appendChar 2
+    push constant 101
+    call String.appendChar 2
+    push constant 109
+    call String.appendChar 2
+    push constant 112
+    call String.appendChar 2
+    push constant 111
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 99
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 98
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 114
+    call String.appendChar 2
+    call GhostGame.printText 2
+    pop temp 0
+    push constant 14
+    push constant 23
+    call Output.moveCursor 2
+    pop temp 0
+    push pointer 0
+    push constant 18
+    call String.new 1
+    push constant 69
+    call String.appendChar 2
+    push constant 83
+    call String.appendChar 2
+    push constant 67
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 101
+    call String.appendChar 2
+    push constant 110
+    call String.appendChar 2
+    push constant 99
+    call String.appendChar 2
+    push constant 101
+    call String.appendChar 2
+    push constant 114
+    call String.appendChar 2
+    push constant 114
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 111
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 106
+    call String.appendChar 2
+    push constant 111
+    call String.appendChar 2
+    push constant 103
+    call String.appendChar 2
+    push constant 111
+    call String.appendChar 2
+    call GhostGame.printText 2
+    pop temp 0
+    push constant 17
+    push constant 13
+    call Output.moveCursor 2
+    pop temp 0
+    push pointer 0
+    push constant 37
+    call String.new 1
+    push constant 80
+    call String.appendChar 2
+    push constant 114
+    call String.appendChar 2
+    push constant 101
+    call String.appendChar 2
+    push constant 115
+    call String.appendChar 2
+    push constant 115
+    call String.appendChar 2
+    push constant 105
+    call String.appendChar 2
+    push constant 111
+    call String.appendChar 2
+    push constant 110
+    call String.appendChar 2
+    push constant 101
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 113
+    call String.appendChar 2
+    push constant 117
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 108
+    call String.appendChar 2
+    push constant 113
+    call String.appendChar 2
+    push constant 117
+    call String.appendChar 2
+    push constant 101
+    call String.appendChar 2
+    push constant 114
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 116
+    call String.appendChar 2
+    push constant 101
+    call String.appendChar 2
+    push constant 99
+    call String.appendChar 2
+    push constant 108
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 112
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 114
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 105
+    call String.appendChar 2
+    push constant 110
+    call String.appendChar 2
+    push constant 105
+    call String.appendChar 2
+    push constant 99
+    call String.appendChar 2
+    push constant 105
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 114
+    call String.appendChar 2
+    call GhostGame.printText 2
+    pop temp 0
+    push constant 0
+    pop local 0
+    call Keyboard.keyPressed 0
+    pop local 1
+label GhostGame_66
+    push local 1
+    push constant 0
+    eq
+    not
+    if-goto GhostGame_67
+    push local 0
+    push constant 1
+    add
+    pop local 0
+    push local 0
+    push constant 30000
+    gt
+    not
+    if-goto GhostGame_69
+    push constant 0
+    pop local 0
+    goto GhostGame_68
+label GhostGame_69
+label GhostGame_68
+    call Keyboard.keyPressed 0
+    pop local 1
+    goto GhostGame_66
+label GhostGame_67
+    push local 1
+    push constant 140
+    eq
+    not
+    if-goto GhostGame_71
+    push constant 1
+    neg
+    pop this 4
+    goto GhostGame_70
+label GhostGame_71
+label GhostGame_70
+label GhostGame_72
+    push local 1
+    push constant 0
+    eq
+    not
+    not
+    if-goto GhostGame_73
+    call Keyboard.keyPressed 0
+    pop local 1
+    goto GhostGame_72
+label GhostGame_73
+    push local 0
+    return
+function GhostGame.showGameOver 0
+    push argument 0
+    pop pointer 0
+    push constant 1
+    neg
+    call Screen.setColor 1
+    pop temp 0
+    push constant 110
+    push constant 90
+    push constant 402
+    push constant 150
+    call Screen.drawRectangle 4
+    pop temp 0
+    push constant 0
+    call Screen.setColor 1
+    pop temp 0
+    push constant 113
+    push constant 93
+    push constant 399
+    push constant 147
+    call Screen.drawRectangle 4
+    pop temp 0
+    push constant 10
+    push constant 18
+    call Output.moveCursor 2
+    pop temp 0
+    push argument 1
+    not
+    if-goto GhostGame_75
+    push pointer 0
+    push constant 28
+    call String.new 1
+    push constant 71
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 109
+    call String.appendChar 2
+    push constant 101
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 79
+    call String.appendChar 2
+    push constant 118
+    call String.appendChar 2
+    push constant 101
+    call String.appendChar 2
+    push constant 114
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 45
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 74
+    call String.appendChar 2
+    push constant 111
+    call String.appendChar 2
+    push constant 103
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 100
+    call String.appendChar 2
+    push constant 111
+    call String.appendChar 2
+    push constant 114
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 50
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 112
+    call String.appendChar 2
+    push constant 101
+    call String.appendChar 2
+    push constant 114
+    call String.appendChar 2
+    push constant 100
+    call String.appendChar 2
+    push constant 101
+    call String.appendChar 2
+    push constant 117
+    call String.appendChar 2
+    call GhostGame.printText 2
+    pop temp 0
+    goto GhostGame_74
+label GhostGame_75
+    push pointer 0
+    push constant 28
+    call String.new 1
+    push constant 71
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 109
+    call String.appendChar 2
+    push constant 101
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 79
+    call String.appendChar 2
+    push constant 118
+    call String.appendChar 2
+    push constant 101
+    call String.appendChar 2
+    push constant 114
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 45
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 74
+    call String.appendChar 2
+    push constant 111
+    call String.appendChar 2
+    push constant 103
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 100
+    call String.appendChar 2
+    push constant 111
+    call String.appendChar 2
+    push constant 114
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 49
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 112
+    call String.appendChar 2
+    push constant 101
+    call String.appendChar 2
+    push constant 114
+    call String.appendChar 2
+    push constant 100
+    call String.appendChar 2
+    push constant 101
+    call String.appendChar 2
+    push constant 117
+    call String.appendChar 2
+    call GhostGame.printText 2
+    pop temp 0
+label GhostGame_74
+    push constant 12
+    push constant 20
+    call Output.moveCursor 2
+    pop temp 0
+    push pointer 0
+    push constant 24
+    call String.new 1
+    push constant 82
+    call String.appendChar 2
+    push constant 101
+    call String.appendChar 2
+    push constant 105
+    call String.appendChar 2
+    push constant 110
+    call String.appendChar 2
+    push constant 105
+    call String.appendChar 2
+    push constant 99
+    call String.appendChar 2
+    push constant 105
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 110
+    call String.appendChar 2
+    push constant 100
+    call String.appendChar 2
+    push constant 111
+    call String.appendChar 2
+    push constant 46
+    call String.appendChar 2
+    push constant 46
+    call String.appendChar 2
+    push constant 46
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 40
+    call String.appendChar 2
+    push constant 69
+    call String.appendChar 2
+    push constant 83
+    call String.appendChar 2
+    push constant 67
+    call String.appendChar 2
+    push constant 32
+    call String.appendChar 2
+    push constant 115
+    call String.appendChar 2
+    push constant 97
+    call String.appendChar 2
+    push constant 105
+    call String.appendChar 2
+    push constant 41
+    call String.appendChar 2
+    call GhostGame.printText 2
+    pop temp 0
+    push constant 0
+    return
+function GhostGame.waitRestart 1
+    push argument 0
+    pop pointer 0
+    push constant 0
+    pop local 0
+label GhostGame_76
+    push local 0
+    push constant 30
+    lt
+    push this 4
+    not
+    and
+    not
+    if-goto GhostGame_77
+    call Keyboard.keyPressed 0
+    push constant 140
+    eq
+    not
+    if-goto GhostGame_79
+    push constant 1
+    neg
+    pop this 4
+    goto GhostGame_78
+label GhostGame_79
+label GhostGame_78
+    push constant 100
     call Sys.wait 1
     pop temp 0
-    goto GhostGame_22
-label GhostGame_23
-    push constant 0
-    pop this 0
-    goto GhostGame_8
-label GhostGame_9
+    push local 0
+    push constant 1
+    add
+    pop local 0
+    goto GhostGame_76
+label GhostGame_77
     push constant 0
     return

@@ -1,0 +1,280 @@
+function Person.new 0
+    push constant 3
+    call Memory.alloc 1
+    pop pointer 0
+    push argument 0
+    pop this 0
+    push argument 1
+    pop this 1
+    push constant 0
+    pop this 2
+    push pointer 0
+    return
+function Person.dispose 0
+    push argument 0
+    pop pointer 0
+    push pointer 0
+    call Memory.deAlloc 1
+    pop temp 0
+    push constant 0
+    return
+function Person.getCol 0
+    push argument 0
+    pop pointer 0
+    push this 0
+    return
+function Person.getRow 0
+    push argument 0
+    pop pointer 0
+    push this 1
+    return
+function Person.getDirection 0
+    push argument 0
+    pop pointer 0
+    push this 2
+    return
+function Person.nextCol 0
+    push argument 0
+    pop pointer 0
+    push this 2
+    push constant 3
+    eq
+    not
+    if-goto Person_1
+    push this 0
+    push constant 1
+    sub
+    return
+    goto Person_0
+label Person_1
+label Person_0
+    push this 2
+    push constant 4
+    eq
+    not
+    if-goto Person_3
+    push this 0
+    push constant 1
+    add
+    return
+    goto Person_2
+label Person_3
+label Person_2
+    push this 0
+    return
+function Person.nextRow 0
+    push argument 0
+    pop pointer 0
+    push this 2
+    push constant 1
+    eq
+    not
+    if-goto Person_5
+    push this 1
+    push constant 1
+    sub
+    return
+    goto Person_4
+label Person_5
+label Person_4
+    push this 2
+    push constant 2
+    eq
+    not
+    if-goto Person_7
+    push this 1
+    push constant 1
+    add
+    return
+    goto Person_6
+label Person_7
+label Person_6
+    push this 1
+    return
+function Person.setDirection 0
+    push argument 0
+    pop pointer 0
+    push argument 1
+    pop this 2
+    push constant 0
+    return
+function Person.stop 0
+    push argument 0
+    pop pointer 0
+    push constant 0
+    pop this 2
+    push constant 0
+    return
+function Person.reset 0
+    push argument 0
+    pop pointer 0
+    push argument 1
+    pop this 0
+    push argument 2
+    pop this 1
+    push constant 0
+    pop this 2
+    push pointer 0
+    call Person.draw 1
+    pop temp 0
+    push constant 0
+    return
+function Person.moveTo 0
+    push argument 0
+    pop pointer 0
+    push pointer 0
+    call Person.erase 1
+    pop temp 0
+    push argument 1
+    pop this 0
+    push argument 2
+    pop this 1
+    push pointer 0
+    call Person.draw 1
+    pop temp 0
+    push constant 0
+    return
+function Person.draw 0
+    push argument 0
+    pop pointer 0
+    push pointer 0
+    push this 1
+    push constant 512
+    call Math.multiply 2
+    push this 0
+    add
+    call Person.drawPerson 2
+    pop temp 0
+    push constant 0
+    return
+function Person.erase 2
+    push argument 0
+    pop pointer 0
+    push this 0
+    push constant 16
+    call Math.multiply 2
+    pop local 0
+    push this 1
+    push constant 16
+    call Math.multiply 2
+    pop local 1
+    push constant 0
+    call Screen.setColor 1
+    pop temp 0
+    push local 0
+    push local 1
+    push local 0
+    push constant 15
+    add
+    push local 1
+    push constant 15
+    add
+    call Screen.drawRectangle 4
+    pop temp 0
+    push constant 0
+    return
+function Person.drawPerson 1
+    push argument 0
+    pop pointer 0
+    push constant 16384
+    push argument 1
+    add
+    pop local 0
+    push local 0
+    push constant 0
+    add
+    push constant 0
+    call Memory.poke 2
+    pop temp 0
+    push local 0
+    push constant 32
+    add
+    push constant 960
+    call Memory.poke 2
+    pop temp 0
+    push local 0
+    push constant 64
+    add
+    push constant 2016
+    call Memory.poke 2
+    pop temp 0
+    push local 0
+    push constant 96
+    add
+    push constant 2016
+    call Memory.poke 2
+    pop temp 0
+    push local 0
+    push constant 128
+    add
+    push constant 960
+    call Memory.poke 2
+    pop temp 0
+    push local 0
+    push constant 160
+    add
+    push constant 384
+    call Memory.poke 2
+    pop temp 0
+    push local 0
+    push constant 192
+    add
+    push constant 4080
+    call Memory.poke 2
+    pop temp 0
+    push local 0
+    push constant 224
+    add
+    push constant 8184
+    call Memory.poke 2
+    pop temp 0
+    push local 0
+    push constant 256
+    add
+    push constant 15324
+    call Memory.poke 2
+    pop temp 0
+    push local 0
+    push constant 288
+    add
+    push constant 15324
+    call Memory.poke 2
+    pop temp 0
+    push local 0
+    push constant 320
+    add
+    push constant 13260
+    call Memory.poke 2
+    pop temp 0
+    push local 0
+    push constant 352
+    add
+    push constant 960
+    call Memory.poke 2
+    pop temp 0
+    push local 0
+    push constant 384
+    add
+    push constant 960
+    call Memory.poke 2
+    pop temp 0
+    push local 0
+    push constant 416
+    add
+    push constant 1632
+    call Memory.poke 2
+    pop temp 0
+    push local 0
+    push constant 448
+    add
+    push constant 1632
+    call Memory.poke 2
+    pop temp 0
+    push local 0
+    push constant 480
+    add
+    push constant 3696
+    call Memory.poke 2
+    pop temp 0
+    push constant 0
+    return

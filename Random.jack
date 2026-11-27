@@ -11,79 +11,40 @@ Improvement: let the number be more random by adding shift number
 **/
 
 class Random {
-    field int seed; //random seed
-    field int calledTime;
+    static int seed; //random seed
+    field int dummy;
 
-    constructor Random new(int seedIn) {
-
-        let seed = seedIn;
-        let seed = rand();
-        let calledTime = 0;
-
+    constructor Random new(int newSeed) {
+        let dummy = 0;
+        let seed = newSeed;
         return this;
     }
 
-    method int rand() {
-        /** return a random number in the range 0..32767 */
-
-        let seed = seed + 20251;
-
-        if (seed < 0) {
-            let seed = seed - 32767 - 1;
-        }
-
-        return seed;
+    method int randRange(int max) {
+        return Random.between(max + 1);
     }
 
-    method int randRange(int range) {
-        /** return a random number in the range 0..range */
-        var int mask;
-        var int ret;
-
-        let mask = 1;
-        while (mask < range) {
-            let mask = mask * 2 + 1;
-        }
-
-        let ret = rand() & mask;
-        let calledTime = calledTime + 1;
-
-        while (ret > range) {
-            let ret = rand() & mask;
-            let calledTime = calledTime + 1;
-            let ret = ret & getShift();
-        }
-
-        return ret;
-    }
-
-    //get new shift number according to called times
-    method int getShift() {
-        var int temp;
-
-        let calledTime = calledTime + 1;
-        let temp = calledTime;
-        
-        while(temp > 9){
-
-            let temp = temp - 9;
-
-        }
-
-        return temp;
-    }
-
-    //dispose the Oject
-    method void dispose(){
+    method void dispose() {
         do Memory.deAlloc(this);
         return;
     }
 
-    method void addCallTime(int times){
+    function void setSeed(int newSeed) {
 
-        let calledTime = calledTime + times;
-        return;
-
+        let seed = newSeed;
+        return this;
     }
 
+    function int rand() {
+        /** return a random number in the range 0..32767 */
+
+        let seed = (seed * 25173) + 13849;
+        return (seed & 32767)/8;
+    }
+
+    function int between(int max) {
+        var int r;
+        let r = Random.rand();
+        return r - ((r/max) * max);
+    }
 }
