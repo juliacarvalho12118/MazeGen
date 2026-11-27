@@ -99,6 +99,7 @@ class GhostGame {
       var int ghostCell, personCell;
 
       do Screen.clearScreen();
+      do maze.newMaze(Random.between(3));
       do maze.draw();
 
       let ghostCell = randomFreeCell(-1);

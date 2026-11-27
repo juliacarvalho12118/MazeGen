@@ -121,6 +121,11 @@ function GhostGame.newRound 2
     call Screen.clearScreen 0
     pop temp 0
     push this 0
+    push constant 3
+    call Random.between 1
+    call Maze.newMaze 2
+    pop temp 0
+    push this 0
     call Maze.draw 1
     pop temp 0
     push pointer 0

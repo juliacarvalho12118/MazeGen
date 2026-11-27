@@ -643,7 +643,7 @@ label Maze_20
     if-goto Maze_25
     push local 2
     push constant 2
-    add
+    sub
     push this 2
     add
     pop pointer 1
@@ -655,7 +655,7 @@ label Maze_20
     push local 5
     push this 4
     add
-    push constant 3
+    push constant 2
     pop temp 0
     pop pointer 1
     push temp 0

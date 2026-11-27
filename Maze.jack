@@ -134,8 +134,8 @@ class Maze {
                 }
             }
             if (cc>2) {
-                if (grid[cur + 2] = 1) {
-                    let dirs[n] = 3;
+                if (grid[cur - 2] = 1) {
+                    let dirs[n] = 2;
                     let n = n+1;
                 }
             }
